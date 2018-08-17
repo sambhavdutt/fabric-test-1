@@ -18,3 +18,32 @@ npm install
   fi
 
 cd $DAILYDIR && py.test -v --junitxml results_systest_pte.xml systest_pte.py
+copy_logs $?
+# Create Logs directory
+mkdir -p $WORKSPACE/Docker_Container_Logs
+artifacts() {
+
+    echo "---> Archiving generated logs"
+    rm -rf $WORKSPACE/archives
+    mkdir -p "$WORKSPACE/archives"
+    mv "$WORKSPACE/Docker_Container_Logs" $WORKSPACE/archives/
+}
+# Capture docker logs of each container
+logs() {
+
+   cp *.log $WORKSPACE/LOGS/$1.log
+   cp *.xml $WORKSPACE/LOGS/$1.xml
+    echo
+
+}
+
+copy_logs() {
+
+# Call logs function
+logs $1
+
+if [ $1 != 0 ]; then
+    artifacts
+    exit 1
+fi
+}
